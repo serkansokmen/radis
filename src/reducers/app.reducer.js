@@ -8,11 +8,11 @@ import {
 
 const initialState = {
   query: '',
-  radius: 500,
-  lat: 52.511358,
-  lng: 13.399321,
+  defaultLatitude: 52.511358,
+  defaultLongitude: 13.399321,
   radius: 5000,
   zoom: 12,
+  geocodeResult: null,
   geoJSON: '',
   error: null,
   isFetching: false,
@@ -20,19 +20,26 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
+
     case SET_QUERY:
       return {
         ...state,
+        query: action.payload,
         isFetching: true,
         error: null
+      }
+
+    case SET_RADIUS:
+      return {
+        ...state,
+        radius: action.payload
       }
 
     case GEOCODE_QUERY_SUCCESS:
       return {
         ...state,
         isFetching: false,
-        lat: action.payload.lat,
-        lng: action.payload.lng,
+        geocodeResult: action.payload,
         error: null
       }
 
