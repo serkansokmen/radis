@@ -3,36 +3,46 @@ import {
   SET_RADIUS,
   GEOCODE_QUERY_SUCCESS,
   GEOCODE_QUERY_ERROR,
-  GENERATE_GEOJSON
+  EXPORT_GEOJSON,
+  EXPORT_GEOJSON_SUCCESS,
+  SET_VIEW_MODE
 } from '../actions/app.actions.js'
 
 const initialState = {
   query: '',
-  radius: 500,
-  lat: 52.511358,
-  lng: 13.399321,
+  defaultLatitude: 52.511358,
+  defaultLongitude: 13.399321,
   radius: 5000,
   zoom: 12,
+  geocodeResult: null,
   geoJSON: '',
   error: null,
   isFetching: false,
+  viewMode: 'map'
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
+
     case SET_QUERY:
       return {
         ...state,
+        query: action.payload,
         isFetching: true,
         error: null
+      }
+
+    case SET_RADIUS:
+      return {
+        ...state,
+        radius: action.payload
       }
 
     case GEOCODE_QUERY_SUCCESS:
       return {
         ...state,
         isFetching: false,
-        lat: action.payload.lat,
-        lng: action.payload.lng,
+        geocodeResult: action.payload,
         error: null
       }
 
@@ -41,6 +51,24 @@ export default function(state = initialState, action) {
         ...state,
         isFetching: false,
         error: action.payload
+      }
+
+    case EXPORT_GEOJSON:
+      return {
+        ...state,
+        geoJSON: ''
+      }
+
+    case EXPORT_GEOJSON_SUCCESS:
+      return {
+        ...state,
+        geoJSON: action.payload
+      }
+
+    case SET_VIEW_MODE:
+      return {
+        ...state,
+        viewMode: action.payload
       }
 
     default:
