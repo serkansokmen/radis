@@ -3,7 +3,9 @@ import {
   SET_RADIUS,
   GEOCODE_QUERY_SUCCESS,
   GEOCODE_QUERY_ERROR,
-  GENERATE_GEOJSON
+  EXPORT_GEOJSON,
+  EXPORT_GEOJSON_SUCCESS,
+  SET_VIEW_MODE
 } from '../actions/app.actions.js'
 
 const initialState = {
@@ -16,6 +18,7 @@ const initialState = {
   geoJSON: '',
   error: null,
   isFetching: false,
+  viewMode: 'map'
 };
 
 export default function(state = initialState, action) {
@@ -48,6 +51,24 @@ export default function(state = initialState, action) {
         ...state,
         isFetching: false,
         error: action.payload
+      }
+
+    case EXPORT_GEOJSON:
+      return {
+        ...state,
+        geoJSON: ''
+      }
+
+    case EXPORT_GEOJSON_SUCCESS:
+      return {
+        ...state,
+        geoJSON: action.payload
+      }
+
+    case SET_VIEW_MODE:
+      return {
+        ...state,
+        viewMode: action.payload
       }
 
     default:
