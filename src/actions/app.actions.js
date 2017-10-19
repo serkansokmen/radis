@@ -1,22 +1,14 @@
 /* eslint-disable no-undef */
 
-import { parseGeoJSON } from '../utils';
+import { parseGeoJSON, requestGeocodingForQuery } from '../utils';
 import constants from './constants';
 
 export function geocodeQuery(query) {
   return (dispatch) => {
     dispatch(setQuery(query));
-    // geocode query string
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({
-      'address': query
-    }, (results, status) => {
-      if (status === 'OK') {
-        dispatch(geocodeQuerySuccess(results[0]));
-      } else {
-        dispatch(geocodeQueryError(`Geocode was not successful for the following reason: ${status}`));
-      }
-    });
+    requestGeocodingForQuery(query)
+      .then((result) => dispatch(geocodeQuerySuccess(result)))
+      .catch((error) => dispatch(geocodeQueryError(error)));
   }
 }
 
@@ -57,12 +49,12 @@ export function setRadius(radius) {
 
 export function exportGeoJSON(center, radius) {
   return (dispatch) => {
-    const result = parseGeoJSON(center, radius);
+    parseGeoJSON(center, radius)
+      .then(result => dispatch({
+        type: constants.EXPORT_GEOJSON_SUCCESS,
+        payload: result
+      }));
     dispatch(setCodeViewDialogOpen(true));
-    dispatch({
-      type: constants.EXPORT_GEOJSON_SUCCESS,
-      payload: result
-    })
   }
 }
 

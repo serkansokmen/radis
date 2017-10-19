@@ -1,7 +1,22 @@
 /* eslint-disable no-undef */
 
-export const parseGeoJSON = (center, radius, numSides = 25) => {
+export const requestGeocodingForQuery = (query) => {
+  return new Promise((resolve, reject) => {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({
+      'address': query
+    }, (results, status) => {
+      if (status === 'OK') {
+        resolve(results[0]);
+      } else {
+        reject(`Geocode was not successful for the following reason: ${status}`);
+      }
+    });
+  });
+}
 
+export const parseGeoJSON = (center, radius, numSides = 25) => {
+  return new Promise((resolve, reject) => {
     const centerLatLng = new google.maps.LatLng(center.lat, center.lng);
     const points = [];
     const step = 360 / numSides;
@@ -24,5 +39,7 @@ export const parseGeoJSON = (center, radius, numSides = 25) => {
         }
       }]
     };
-    return JSON.stringify(result, null, 2);
-  }
+
+    resolve(JSON.stringify(result, null, 2));
+  });
+}
