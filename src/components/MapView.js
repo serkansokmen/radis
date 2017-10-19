@@ -1,60 +1,58 @@
+/* eslint-disable no-undef */
+
 import React, { Component } from 'react';
 import { compose, withProps } from 'recompose';
-import { withGoogleMap, GoogleMap, Circle } from 'react-google-maps';
+import { withScriptjs, withGoogleMap, GoogleMap, Circle } from 'react-google-maps';
 import { Throttle } from 'react-throttle';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
-import { setQuery, setCenter, setRadius, exportGeoJSON, setCodeViewDialogOpen } from '../actions/app.actions';
+import appActions from '../actions/app.actions';
 import { CodeViewComponent } from './CodeView';
+import { withNotie } from 'react-notie';
+import config from '../config';
 
 class MapView extends Component {
 
-  handleQueryChange = (event) => {
+  onQueryChange = (event) => {
     const value = event.target.value;
     if (value.length >= 2) {
-      this.props.dispatch(setQuery(event.target.value));
+      this.props.dispatch(appActions.setQuery(event.target.value));
     }
   };
 
-  handleRadiusSliderChange = (event, newValue) => {
-    this.props.dispatch(setRadius(newValue));
+  onRadiusSliderChange = (event, newValue) => {
+    this.props.dispatch(appActions.setRadius(newValue));
   };
 
-  handleCircleRadiusChange = () => {
+  onCircleRadiusChange = () => {
     const radius = this.refs.circle.getRadius();
-    this.props.dispatch(setRadius(radius));
+    this.props.dispatch(appActions.setRadius(radius));
   };
 
-  handleMapCenterChange = (center) => {
-    this.props.dispatch(setCenter(center));
-  };
-
-  handleCircleCenterChange = () => {
+  onCircleCenterChange = () => {
     const center = this.refs.circle.getCenter();
-    this.handleMapCenterChange(center);
+    this.props.dispatch(appActions.setCenter(center));
   };
 
-  handleExportButtonClick = (event) => {
-    const { hasResult, radius, dispatch, latitude, longitude } = this.props;
+  onExportButtonClick = (event) => {
+    const { hasResult, radius, dispatch, center } = this.props;
     if (!hasResult) {
       return;
     }
-    dispatch(exportGeoJSON({
-      lat: latitude,
-      lng: longitude,
-      radius: radius,
-    }));
+    dispatch(appActions.exportGeoJSON(center, radius));
   };
 
-  handleCodeDialogClose = () => {
-    this.props.dispatch(setCodeViewDialogOpen(false));
+  onCodeDialogClose = () => {
+    this.props.dispatch(appActions.setCodeViewDialogOpen(false));
   };
 
-  handleOnCopy = (result) => {
-    alert('Copied to the clipboard');
+  onCopy = (result) => {
+    this.props.dispatch(appActions.setCopied());
+    this.onCodeDialogClose();
+    this.props.notie.success('Copied to clipboard!');
   }
 
   render() {
@@ -62,17 +60,18 @@ class MapView extends Component {
     const {
       hasResult,
       formattedAddress,
-      latitude,
-      longitude,
+      center,
+      bounds,
+      markers,
       radius,
       zoom,
       geoJSON,
       isCodeDialogOpen,
-      error
+      error,
+      isCopied
     } = this.props;
 
-    const center = { lat: latitude, lng: longitude };
-    const controlsStyle = {
+    const paperStyle = {
       margin: 20,
       padding: 15,
       textAlign: 'left',
@@ -83,7 +82,17 @@ class MapView extends Component {
     const dialogTitle = `${formattedAddress}, ${radiusDescription}`;
 
     return (
-      <div className="container">
+      <div>
+        <Paper style={paperStyle}>
+          <Throttle time="600" handler="onChange">
+            <TextField
+              hintText="Search for a location"
+              errorText={error}
+              fullWidth={true}
+              onChange={this.onQueryChange}/>
+          </Throttle>
+        </Paper>
+
         <GoogleMap defaultZoom={zoom} center={center}>
           { hasResult &&
             <Circle
@@ -94,40 +103,31 @@ class MapView extends Component {
               options={
                 {'fillColor': 'red', 'strokeColor': 'red', 'fillOpacity': 0.3}
               }
-              onCenterChanged={this.handleCircleCenterChange.bind(this)}
-              onRadiusChanged={this.handleCircleRadiusChange}/>
+              onCenterChanged={this.onCircleCenterChange}
+              onRadiusChanged={this.onCircleRadiusChange}/>
             }
         </GoogleMap>
 
-        <Paper style={controlsStyle}>
-          <Throttle time="600" handler="onChange">
-            <TextField
-              hintText="Search for a location"
-              errorText={error}
-              fullWidth={true}
-              onChange={this.handleQueryChange}/>
-          </Throttle>
-          <p>{formattedAddress}</p>
-          { hasResult &&
-            <div>
-              <div>{radiusDescription}
-                <Slider
-                  value={radius}
-                  min={500}
-                  max={10000}
-                  onChange={this.handleRadiusSliderChange}/>
-              </div>
-              <FlatButton primary={true} fullWidth={true} onClick={this.handleExportButtonClick}>Export to GeoJSON</FlatButton>
+        { hasResult &&
+          <Paper style={paperStyle}>
+            <h1>{formattedAddress}</h1>
+            <div>{radiusDescription}
+              <Slider
+                value={radius}
+                min={500}
+                max={10000}
+                onChange={this.onRadiusSliderChange}/>
             </div>
-          }
-        </Paper>
+            <FlatButton primary={true} fullWidth={true} onClick={this.onExportButtonClick}>Export to GeoJSON</FlatButton>
+          </Paper>
+        }
 
         <Dialog
           title={dialogTitle}
           modal={false}
           open={isCodeDialogOpen}
-          onRequestClose={this.handleCodeDialogClose}>
-          <CodeViewComponent value={geoJSON} onCopy={this.handleOnCopy.bind(this)}/>
+          onRequestClose={this.onCodeDialogClose}>
+          <CodeViewComponent value={geoJSON} onCopy={this.onCopy}/>
         </Dialog>
       </div>
     )
@@ -136,9 +136,13 @@ class MapView extends Component {
 
 export const MapViewComponent = compose(
   withProps({
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: '100%' }} />,
     containerElement: <div style={{ height: '400px' }} />,
     mapElement: <div style={{ height: '100%' }} />,
   }),
-  withGoogleMap
+  withScriptjs,
+  withGoogleMap,
+  withNotie,
 )(MapView);
+
