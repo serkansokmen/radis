@@ -1,6 +1,6 @@
 import constants from '../actions/constants';
 
-const initialState = {
+export const initialState = {
   query: '',
   center: {
     lat: 52.511358,
