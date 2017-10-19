@@ -1,8 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import './index.css';
-import App from './App';
+import Layout from './components/Layout';
+import store from './store';
+
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// Material UI
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
+// Syntax highlighter registers only necessary languages
+import { registerLanguage } from 'react-syntax-highlighter/dist/light';
+import json from 'react-syntax-highlighter/dist/languages/json';
+
+// Needed for onTouchTap
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
+import { NotieProvider } from 'react-notie';
+import 'react-notie/css/notie.css';
+
+injectTapEventPlugin();
+registerLanguage('json', json);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+      <NotieProvider>
+        <Layout />
+      </NotieProvider>
+    </MuiThemeProvider>
+  </Provider>, document.getElementById('root'));
+
 registerServiceWorker();
