@@ -19,19 +19,14 @@ import json from 'react-syntax-highlighter/dist/languages/json';
 // Needed for onTouchTap
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import { NotieProvider } from 'react-notie';
-import 'react-notie/css/notie.css';
-
 injectTapEventPlugin();
 registerLanguage('json', json);
+registerServiceWorker();
 
 ReactDOM.render(
   <Provider store={store}>
     <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
-      <NotieProvider>
-        <Layout />
-      </NotieProvider>
+      <Layout />
     </MuiThemeProvider>
   </Provider>, document.getElementById('root'));
 
-registerServiceWorker();

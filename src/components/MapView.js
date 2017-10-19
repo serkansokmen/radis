@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { compose, withProps } from 'recompose';
-import { withScriptjs, withGoogleMap, GoogleMap, Circle } from 'react-google-maps';
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, Circle } from 'react-google-maps';
 import { Throttle } from 'react-throttle';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -11,8 +11,6 @@ import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import appActions from '../actions/app.actions';
 import { CodeViewComponent } from './CodeView';
-import { withNotie } from 'react-notie';
-import config from '../config';
 
 class MapView extends Component {
 
@@ -52,7 +50,6 @@ class MapView extends Component {
   onCopy = (result) => {
     this.props.dispatch(appActions.setCopied());
     this.onCodeDialogClose();
-    this.props.notie.success('Copied to clipboard!');
   }
 
   render() {
@@ -61,14 +58,11 @@ class MapView extends Component {
       hasResult,
       formattedAddress,
       center,
-      bounds,
-      markers,
       radius,
       zoom,
       geoJSON,
       isCodeDialogOpen,
-      error,
-      isCopied
+      error
     } = this.props;
 
     const paperStyle = {
@@ -94,6 +88,7 @@ class MapView extends Component {
         </Paper>
 
         <GoogleMap defaultZoom={zoom} center={center}>
+          <Marker position={center}/>
           { hasResult &&
             <Circle
               ref="circle"
@@ -136,13 +131,12 @@ class MapView extends Component {
 
 export const MapViewComponent = compose(
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: '100%' }} />,
     containerElement: <div style={{ height: '400px' }} />,
     mapElement: <div style={{ height: '100%' }} />,
   }),
   withScriptjs,
   withGoogleMap,
-  withNotie,
 )(MapView);
 
