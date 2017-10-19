@@ -1,12 +1,13 @@
 import { parseGeoJSON } from '../utils';
 
 export const SET_QUERY = '[App] Set query';
+export const SET_CENTER = '[App] Set center';
 export const SET_RADIUS = '[App] Set radius';
 export const GEOCODE_QUERY_SUCCESS = '[App] Geocode query success';
 export const GEOCODE_QUERY_ERROR = '[App] Geocode query error';
 export const EXPORT_GEOJSON = '[App] Export GeoJSON';
 export const EXPORT_GEOJSON_SUCCESS = '[App] Export GeoJSON success';
-export const SET_VIEW_MODE = '[App] Set view mode';
+export const SET_CODE_VIEW_DIALOG_OPEN = '[App] Set code view dialog open';
 
 export function setQuery(query) {
   return (dispatch) => {
@@ -29,6 +30,13 @@ export function setQuery(query) {
   }
 }
 
+export function setCenter(center) {
+  return {
+    type: SET_CENTER,
+    payload: center
+  }
+}
+
 export function setRadius(radius) {
   return {
     type: SET_RADIUS,
@@ -39,7 +47,7 @@ export function setRadius(radius) {
 export function exportGeoJSON(data) {
   return (dispatch) => {
     const result = parseGeoJSON(data);
-    dispatch(setViewMode('code'));
+    dispatch(setCodeViewDialogOpen(true));
     dispatch({
       type: EXPORT_GEOJSON_SUCCESS,
       payload: result
@@ -47,9 +55,9 @@ export function exportGeoJSON(data) {
   }
 }
 
-export function setViewMode(mode) {
+export function setCodeViewDialogOpen(isOpen) {
   return {
-    type: SET_VIEW_MODE,
-    payload: mode
+    type: SET_CODE_VIEW_DIALOG_OPEN,
+    payload: isOpen
   }
 }

@@ -14,5 +14,8 @@ pre {
   overflow: hidden;
   overflow-y: auto;
   border-radius: 8px;
-  cursor: pointer;
+}
+
+.container {
+  margin: 0 auto;
 }

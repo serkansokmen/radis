@@ -1,24 +1,26 @@
 import {
   SET_QUERY,
+  SET_CENTER,
   SET_RADIUS,
   GEOCODE_QUERY_SUCCESS,
   GEOCODE_QUERY_ERROR,
   EXPORT_GEOJSON,
   EXPORT_GEOJSON_SUCCESS,
-  SET_VIEW_MODE
+  SET_CODE_VIEW_DIALOG_OPEN
 } from '../actions/app.actions.js'
 
 const initialState = {
   query: '',
-  defaultLatitude: 52.511358,
-  defaultLongitude: 13.399321,
+  latitude: 52.511358,
+  longitude: 13.399321,
   radius: 5000,
   zoom: 12,
-  geocodeResult: null,
+  hasResult: false,
+  formattedAddress: '',
   geoJSON: '',
   error: null,
   isFetching: false,
-  viewMode: 'map'
+  isCodeDialogOpen: false,
 };
 
 export default function(state = initialState, action) {
@@ -32,6 +34,13 @@ export default function(state = initialState, action) {
         error: null
       }
 
+    case SET_CENTER:
+      return {
+        ...state,
+        latitude: action.payload.lat(),
+        longitude: action.payload.lng()
+      }
+
     case SET_RADIUS:
       return {
         ...state,
@@ -42,13 +51,17 @@ export default function(state = initialState, action) {
       return {
         ...state,
         isFetching: false,
-        geocodeResult: action.payload,
+        hasResult: true,
+        latitude: action.payload.geometry.location.lat(),
+        longitude: action.payload.geometry.location.lng(),
+        formattedAddress: action.payload.formatted_address,
         error: null
       }
 
     case GEOCODE_QUERY_ERROR:
       return {
         ...state,
+        hasResult: false,
         isFetching: false,
         error: action.payload
       }
@@ -65,10 +78,10 @@ export default function(state = initialState, action) {
         geoJSON: action.payload
       }
 
-    case SET_VIEW_MODE:
+    case SET_CODE_VIEW_DIALOG_OPEN:
       return {
         ...state,
-        viewMode: action.payload
+        isCodeDialogOpen: action.payload
       }
 
     default:
