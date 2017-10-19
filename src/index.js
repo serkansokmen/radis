@@ -24,6 +24,7 @@ import 'react-notie/css/notie.css';
 
 injectTapEventPlugin();
 registerLanguage('json', json);
+registerServiceWorker();
 
 ReactDOM.render(
   <Provider store={store}>
@@ -34,4 +35,3 @@ ReactDOM.render(
     </MuiThemeProvider>
   </Provider>, document.getElementById('root'));
 
-registerServiceWorker();
