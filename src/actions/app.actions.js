@@ -1,48 +1,56 @@
 /* eslint-disable no-undef */
 
 import { parseGeoJSON } from '../utils';
+import constants from './constants';
 
-export const SET_QUERY = '[App] Set query';
-export const SET_PLACE_RESULT = '[App] Set place result';
-export const SET_CENTER = '[App] Set center';
-export const SET_RADIUS = '[App] Set radius';
-export const GEOCODE_QUERY_SUCCESS = '[App] Geocode query success';
-export const GEOCODE_QUERY_ERROR = '[App] Geocode query error';
-export const EXPORT_GEOJSON = '[App] Export GeoJSON';
-export const EXPORT_GEOJSON_SUCCESS = '[App] Export GeoJSON success';
-export const SET_CODE_VIEW_DIALOG_OPEN = '[App] Set code view dialog open';
-export const SET_COPIED = '[App] Set copied';
-
-export function setQuery(query) {
+export function geocodeQuery(query) {
   return (dispatch) => {
-    dispatch({ type: SET_QUERY, payload: query });
+    dispatch(setQuery(query));
     // geocode query string
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({
       'address': query
     }, (results, status) => {
       if (status === 'OK') {
-        dispatch({ type: GEOCODE_QUERY_SUCCESS, payload: results[0] });
+        dispatch(geocodeQuerySuccess(results[0]));
       } else {
-        dispatch({
-          type: GEOCODE_QUERY_ERROR,
-          payload: `Geocode was not successful for the following reason: ${status}`
-        });
+        dispatch(geocodeQueryError(`Geocode was not successful for the following reason: ${status}`));
       }
     });
   }
 }
 
+function setQuery(query) {
+  return {
+    type: constants.SET_QUERY,
+    payload: query
+  }
+}
+
+function geocodeQuerySuccess(result) {
+  return {
+    type: constants.GEOCODE_QUERY_SUCCESS,
+    payload: result
+  }
+}
+
+function geocodeQueryError(error) {
+  return {
+    type: constants.GEOCODE_QUERY_ERROR,
+    payload: error
+  }
+}
+
 export function setCenter(center) {
   return {
-    type: SET_CENTER,
+    type: constants.SET_CENTER,
     payload: center
   }
 }
 
 export function setRadius(radius) {
   return {
-    type: SET_RADIUS,
+    type: constants.SET_RADIUS,
     payload: radius
   }
 }
@@ -52,7 +60,7 @@ export function exportGeoJSON(center, radius) {
     const result = parseGeoJSON(center, radius);
     dispatch(setCodeViewDialogOpen(true));
     dispatch({
-      type: EXPORT_GEOJSON_SUCCESS,
+      type: constants.EXPORT_GEOJSON_SUCCESS,
       payload: result
     })
   }
@@ -60,27 +68,20 @@ export function exportGeoJSON(center, radius) {
 
 export function setCodeViewDialogOpen(isOpen) {
   return {
-    type: SET_CODE_VIEW_DIALOG_OPEN,
+    type: constants.SET_CODE_VIEW_DIALOG_OPEN,
     payload: isOpen
-  }
-}
-
-export function setPlaceResult(result) {
-  return {
-    type: SET_PLACE_RESULT,
-    payload: result
   }
 }
 
 export function setCopied() {
   return {
-    type: SET_COPIED,
+    type: constants.SET_COPIED,
     payload: true
   }
 }
 
 export default {
-  setQuery,
+  geocodeQuery,
   setCenter,
   setRadius,
   exportGeoJSON,

@@ -17,7 +17,7 @@ class MapView extends Component {
   onQueryChange = (event) => {
     const value = event.target.value;
     if (value.length >= 2) {
-      this.props.dispatch(appActions.setQuery(event.target.value));
+      this.props.dispatch(appActions.geocodeQuery(event.target.value));
     }
   };
 
