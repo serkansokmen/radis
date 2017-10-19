@@ -19,15 +19,5 @@ class Layout extends Component {
 }
 
 export default connect((state) => {
-  return {
-    ...state.app,
-    // query: state.app.query,
-    // radius: state.app.radius,
-    // zoom: state.app.zoom,
-    // lat: state.app.lat,
-    // lng: state.app.lng,
-    // geoJSON: state.app.geoJSON,
-    // error: state.app.error,
-    // isFetching: state.app.isFetching,
-  }
+  return { ...state.app }
 })(Layout);

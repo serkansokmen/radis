@@ -6,7 +6,8 @@ import {
   GEOCODE_QUERY_ERROR,
   EXPORT_GEOJSON,
   EXPORT_GEOJSON_SUCCESS,
-  SET_CODE_VIEW_DIALOG_OPEN
+  SET_CODE_VIEW_DIALOG_OPEN,
+  SET_COPIED
 } from '../actions/app.actions.js'
 
 const initialState = {
@@ -21,6 +22,7 @@ const initialState = {
   error: null,
   isFetching: false,
   isCodeDialogOpen: false,
+  isCopied: false,
 };
 
 export default function(state = initialState, action) {
@@ -42,10 +44,7 @@ export default function(state = initialState, action) {
       }
 
     case SET_RADIUS:
-      return {
-        ...state,
-        radius: action.payload
-      }
+      return { ...state, radius: action.payload }
 
     case GEOCODE_QUERY_SUCCESS:
       return {
@@ -67,22 +66,16 @@ export default function(state = initialState, action) {
       }
 
     case EXPORT_GEOJSON:
-      return {
-        ...state,
-        geoJSON: ''
-      }
+      return { ...state, geoJSON: '' }
 
     case EXPORT_GEOJSON_SUCCESS:
-      return {
-        ...state,
-        geoJSON: action.payload
-      }
+      return { ...state, geoJSON: action.payload }
 
     case SET_CODE_VIEW_DIALOG_OPEN:
-      return {
-        ...state,
-        isCodeDialogOpen: action.payload
-      }
+      return { ...state, isCodeDialogOpen: action.payload }
+
+    case SET_COPIED:
+      return { ...state, isCopied: action.payload }
 
     default:
       return state;

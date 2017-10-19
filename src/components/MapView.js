@@ -7,7 +7,7 @@ import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
-import { setQuery, setCenter, setRadius, exportGeoJSON, setCodeViewDialogOpen } from '../actions/app.actions';
+import appActions from '../actions/app.actions';
 import { CodeViewComponent } from './CodeView';
 
 class MapView extends Component {
@@ -15,21 +15,21 @@ class MapView extends Component {
   handleQueryChange = (event) => {
     const value = event.target.value;
     if (value.length >= 2) {
-      this.props.dispatch(setQuery(event.target.value));
+      this.props.dispatch(appActions.setQuery(event.target.value));
     }
   };
 
   handleRadiusSliderChange = (event, newValue) => {
-    this.props.dispatch(setRadius(newValue));
+    this.props.dispatch(appActions.setRadius(newValue));
   };
 
   handleCircleRadiusChange = () => {
     const radius = this.refs.circle.getRadius();
-    this.props.dispatch(setRadius(radius));
+    this.props.dispatch(appActions.setRadius(radius));
   };
 
   handleMapCenterChange = (center) => {
-    this.props.dispatch(setCenter(center));
+    this.props.dispatch(appActions.setCenter(center));
   };
 
   handleCircleCenterChange = () => {
@@ -42,7 +42,7 @@ class MapView extends Component {
     if (!hasResult) {
       return;
     }
-    dispatch(exportGeoJSON({
+    dispatch(appActions.exportGeoJSON({
       lat: latitude,
       lng: longitude,
       radius: radius,
@@ -50,11 +50,11 @@ class MapView extends Component {
   };
 
   handleCodeDialogClose = () => {
-    this.props.dispatch(setCodeViewDialogOpen(false));
+    this.props.dispatch(appActions.setCodeViewDialogOpen(false));
   };
 
   handleOnCopy = (result) => {
-    alert('Copied to the clipboard');
+    this.props.dispatch(appActions.setCopied());
   }
 
   render() {
@@ -68,7 +68,8 @@ class MapView extends Component {
       zoom,
       geoJSON,
       isCodeDialogOpen,
-      error
+      error,
+      isCopied
     } = this.props;
 
     const center = { lat: latitude, lng: longitude };
@@ -84,6 +85,15 @@ class MapView extends Component {
 
     return (
       <div className="container">
+        <Paper style={controlsStyle}>
+          <Throttle time="600" handler="onChange">
+            <TextField
+              hintText="Search for a location"
+              errorText={error}
+              fullWidth={true}
+              onChange={this.handleQueryChange}/>
+          </Throttle>
+        </Paper>
         <GoogleMap defaultZoom={zoom} center={center}>
           { hasResult &&
             <Circle
@@ -99,35 +109,26 @@ class MapView extends Component {
             }
         </GoogleMap>
 
-        <Paper style={controlsStyle}>
-          <Throttle time="600" handler="onChange">
-            <TextField
-              hintText="Search for a location"
-              errorText={error}
-              fullWidth={true}
-              onChange={this.handleQueryChange}/>
-          </Throttle>
-          <p>{formattedAddress}</p>
-          { hasResult &&
-            <div>
-              <div>{radiusDescription}
-                <Slider
-                  value={radius}
-                  min={500}
-                  max={10000}
-                  onChange={this.handleRadiusSliderChange}/>
-              </div>
-              <FlatButton primary={true} fullWidth={true} onClick={this.handleExportButtonClick}>Export to GeoJSON</FlatButton>
+        { hasResult &&
+          <Paper style={controlsStyle}>
+            <h1>{formattedAddress}</h1>
+            <div>{radiusDescription}
+              <Slider
+                value={radius}
+                min={500}
+                max={10000}
+                onChange={this.handleRadiusSliderChange}/>
             </div>
-          }
-        </Paper>
+            <FlatButton primary={true} fullWidth={true} onClick={this.handleExportButtonClick}>Export to GeoJSON</FlatButton>
+          </Paper>
+        }
 
         <Dialog
           title={dialogTitle}
           modal={false}
           open={isCodeDialogOpen}
           onRequestClose={this.handleCodeDialogClose}>
-          <CodeViewComponent value={geoJSON} onCopy={this.handleOnCopy.bind(this)}/>
+          <CodeViewComponent value={geoJSON} onCopy={this.handleOnCopy}/>
         </Dialog>
       </div>
     )

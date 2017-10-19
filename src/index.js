@@ -13,9 +13,15 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
+// Syntax highlighter registers only necessary languages
+import { registerLanguage } from 'react-syntax-highlighter/dist/light';
+import json from 'react-syntax-highlighter/dist/languages/json';
+
 // Needed for onTouchTap
 import injectTapEventPlugin from 'react-tap-event-plugin';
+
 injectTapEventPlugin();
+registerLanguage('json', json);
 
 ReactDOM.render(
   <Provider store={store}>

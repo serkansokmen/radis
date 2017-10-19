@@ -8,6 +8,7 @@ export const GEOCODE_QUERY_ERROR = '[App] Geocode query error';
 export const EXPORT_GEOJSON = '[App] Export GeoJSON';
 export const EXPORT_GEOJSON_SUCCESS = '[App] Export GeoJSON success';
 export const SET_CODE_VIEW_DIALOG_OPEN = '[App] Set code view dialog open';
+export const SET_COPIED = '[App] Set copied';
 
 export function setQuery(query) {
   return (dispatch) => {
@@ -60,4 +61,20 @@ export function setCodeViewDialogOpen(isOpen) {
     type: SET_CODE_VIEW_DIALOG_OPEN,
     payload: isOpen
   }
+}
+
+export function setCopied() {
+  return {
+    type: SET_COPIED,
+    payload: true
+  }
+}
+
+export default {
+  setQuery,
+  setCenter,
+  setRadius,
+  exportGeoJSON,
+  setCodeViewDialogOpen,
+  setCopied,
 }
