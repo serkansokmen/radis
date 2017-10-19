@@ -12,10 +12,13 @@ import {
 
 const initialState = {
   query: '',
-  latitude: 52.511358,
-  longitude: 13.399321,
+  bounds: null,
+  center: {
+    lat: 52.511358,
+    lng: 13.399321,
+  },
   radius: 5000,
-  zoom: 12,
+  zoom: 11,
   hasResult: false,
   formattedAddress: '',
   geoJSON: '',
@@ -39,8 +42,10 @@ export default function(state = initialState, action) {
     case SET_CENTER:
       return {
         ...state,
-        latitude: action.payload.lat(),
-        longitude: action.payload.lng()
+        center: {
+          lat: action.payload.lat(),
+          lng: action.payload.lng()
+        }
       }
 
     case SET_RADIUS:

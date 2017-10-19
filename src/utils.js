@@ -1,14 +1,13 @@
-const google = window.google;
+/* eslint-disable no-undef */
 
-export const parseGeoJSON = (data, numSides = 25) => {
+export const parseGeoJSON = (center, radius, numSides = 25) => {
 
-    const center = new google.maps.LatLng(data.lat, data.lng);
+    const centerLatLng = new google.maps.LatLng(center.lat, center.lng);
     const points = [];
     const step = 360 / numSides;
 
     for (var i = 0; i < numSides; i++) {
-      const gpos = google.maps.geometry.spherical.computeOffset(
-        center, data.radius, step * i);
+      const gpos = google.maps.geometry.spherical.computeOffset(centerLatLng, radius, step * i);
       points.push([gpos.lng(), gpos.lat()]);
     };
 
