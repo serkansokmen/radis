@@ -3,6 +3,13 @@
 import { parseGeoJSON, requestGeocodingForQuery } from '../utils';
 import constants from './constants';
 
+export function setQuery(query) {
+  return {
+    type: constants.SET_QUERY,
+    payload: query
+  }
+}
+
 export function geocodeQuery(query) {
   return (dispatch) => {
     dispatch(setQuery(query));
@@ -12,21 +19,14 @@ export function geocodeQuery(query) {
   }
 }
 
-function setQuery(query) {
-  return {
-    type: constants.SET_QUERY,
-    payload: query
-  }
-}
-
-function geocodeQuerySuccess(result) {
+export function geocodeQuerySuccess(result) {
   return {
     type: constants.GEOCODE_QUERY_SUCCESS,
     payload: result
   }
 }
 
-function geocodeQueryError(error) {
+export function geocodeQueryError(error) {
   return {
     type: constants.GEOCODE_QUERY_ERROR,
     payload: error
@@ -73,7 +73,10 @@ export function setCopied() {
 }
 
 export default {
+  setQuery,
   geocodeQuery,
+  geocodeQuerySuccess,
+  geocodeQueryError,
   setCenter,
   setRadius,
   exportGeoJSON,

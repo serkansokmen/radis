@@ -48,8 +48,8 @@ export default function(state = initialState, action) {
       return {
         ...state,
         center: {
-          lat: action.payload.lat(),
-          lng: action.payload.lng()
+          lat: typeof(action.payload.lat) === 'function' ? action.payload.lat() : action.payload.lat,
+          lng: typeof(action.payload.lng) === 'function' ? action.payload.lng() : action.payload.lng
         }
       }
 
