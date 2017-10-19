@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { compose, withProps } from 'recompose';
-import { withScriptjs, withGoogleMap, GoogleMap, Circle } from 'react-google-maps';
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, Circle } from 'react-google-maps';
 import { Throttle } from 'react-throttle';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -88,6 +88,7 @@ class MapView extends Component {
         </Paper>
 
         <GoogleMap defaultZoom={zoom} center={center}>
+          <Marker position={center}/>
           { hasResult &&
             <Circle
               ref="circle"
