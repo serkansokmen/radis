@@ -1,4 +1,3 @@
-import appActions from '../actions/app.actions';
 import constants from '../actions/constants';
 
 const initialState = {
