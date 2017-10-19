@@ -11,7 +11,6 @@ import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import appActions from '../actions/app.actions';
 import { CodeViewComponent } from './CodeView';
-import { withNotie } from 'react-notie';
 
 class MapView extends Component {
 
@@ -51,7 +50,6 @@ class MapView extends Component {
   onCopy = (result) => {
     this.props.dispatch(appActions.setCopied());
     this.onCodeDialogClose();
-    this.props.notie.success('Copied to clipboard!');
   }
 
   render() {
@@ -139,6 +137,5 @@ export const MapViewComponent = compose(
   }),
   withScriptjs,
   withGoogleMap,
-  withNotie,
 )(MapView);
 
