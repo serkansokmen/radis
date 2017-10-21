@@ -8,7 +8,13 @@ export const CodeViewComponent = (props => {
   return <div>
     <SyntaxHighlighter language='json' style={docco}>{props.value}</SyntaxHighlighter>
     <CopyToClipboard text={props.value} onCopy={props.onCopy}>
-      <FlatButton primary={true} fullWidth={true}>Copy</FlatButton>
+    {
+      props.isNotificationVisible ?
+      <div className="alert">
+        Copied to Clipboard.
+      </div>
+      :
+      <FlatButton primary={true} fullWidth={true}>Copy</FlatButton>}
     </CopyToClipboard>
   </div>
 });

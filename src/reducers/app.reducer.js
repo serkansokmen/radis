@@ -7,6 +7,8 @@ const initialState = {
     lng: 13.399321,
   },
   radius: 5000,
+  minRadius: 500,
+  maxRadius: 20000,
   zoom: 11,
   hasResult: false,
   formattedAddress: '',
@@ -14,13 +16,13 @@ const initialState = {
   error: null,
   isFetching: false,
   isCodeDialogOpen: false,
-  isCopied: false,
+  isNotificationVisible: false,
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
 
-    case constants.SET_QUERY:
+    case constants.CHANGE_QUERY:
       return { ...state, query: action.payload }
 
     case constants.GEOCODE_QUERY_SUCCESS:
@@ -57,16 +59,22 @@ export default function(state = initialState, action) {
       return { ...state, radius: action.payload }
 
     case constants.EXPORT_GEOJSON:
-      return { ...state, geoJSON: '' }
+      return state;
 
     case constants.EXPORT_GEOJSON_SUCCESS:
-      return { ...state, geoJSON: action.payload }
+      return { ...state, geoJSON: action.payload, error: null }
+
+    case constants.EXPORT_GEOJSON_ERROR:
+      return { ...state, geoJSON: '', error: action.payload }
 
     case constants.SET_CODE_VIEW_DIALOG_OPEN:
       return { ...state, isCodeDialogOpen: action.payload }
 
-    case constants.SET_COPIED:
-      return { ...state, isCopied: action.payload }
+    case constants.SHOW_COPIED_NOTIFICATION:
+      return { ...state, isNotificationVisible: true }
+
+    case constants.HIDE_COPIED_NOTIFICATION:
+      return { ...state, isNotificationVisible: false }
 
     default:
       return state;

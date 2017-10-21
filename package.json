@@ -20,7 +20,9 @@
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.2.0"
+    "redux-observable": "^0.16.0",
+    "redux-thunk": "^2.2.0",
+    "rxjs": "^5.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -28,5 +30,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "redux-devtools-extension": "^2.13.2"
+  }
 }
