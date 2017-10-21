@@ -17,7 +17,7 @@ class MapView extends Component {
   onQueryChange = (event) => {
     const value = event.target.value;
     if (value.length >= 2) {
-      this.props.dispatch(appActions.geocodeQuery(event.target.value));
+      this.props.dispatch(appActions.changeQuery(event.target.value));
     }
   };
 
@@ -27,7 +27,11 @@ class MapView extends Component {
 
   onCircleRadiusChange = () => {
     const radius = this.refs.circle.getRadius();
-    this.props.dispatch(appActions.setRadius(radius));
+    if (radius >= this.props.minRadius && radius <= this.props.maxRadius) {
+      this.props.dispatch(appActions.setRadius(radius));
+    } else {
+      this.props.dispatch(appActions.setRadius(this.props.radius));
+    }
   };
 
   onCircleCenterChange = () => {
@@ -35,22 +39,17 @@ class MapView extends Component {
     this.props.dispatch(appActions.setCenter(center));
   };
 
-  onExportButtonClick = (event) => {
-    const { hasResult, radius, dispatch, center } = this.props;
-    if (!hasResult) {
-      return;
-    }
-    dispatch(appActions.exportGeoJSON(center, radius));
+  onDialogButtonClick = (event) => {
+    this.props.dispatch(appActions.setCodeViewDialogOpen(true));
   };
 
   onCodeDialogClose = () => {
     this.props.dispatch(appActions.setCodeViewDialogOpen(false));
   };
 
-  onCopy = (result) => {
-    this.props.dispatch(appActions.setCopied());
-    this.onCodeDialogClose();
-  }
+  onCopy = () => {
+    this.props.dispatch(appActions.showCopiedNotification());
+  };
 
   render() {
 
@@ -59,9 +58,12 @@ class MapView extends Component {
       formattedAddress,
       center,
       radius,
+      minRadius,
+      maxRadius,
       zoom,
       geoJSON,
       isCodeDialogOpen,
+      isNotificationVisible,
       error
     } = this.props;
 
@@ -109,11 +111,11 @@ class MapView extends Component {
             <div>{radiusDescription}
               <Slider
                 value={radius}
-                min={500}
-                max={10000}
+                min={minRadius}
+                max={maxRadius}
                 onChange={this.onRadiusSliderChange}/>
             </div>
-            <FlatButton primary={true} fullWidth={true} onClick={this.onExportButtonClick}>Export to GeoJSON</FlatButton>
+            <FlatButton primary={true} fullWidth={true} onClick={this.onDialogButtonClick}>View GeoJSON</FlatButton>
           </Paper>
         }
 
@@ -122,7 +124,7 @@ class MapView extends Component {
           modal={false}
           open={isCodeDialogOpen}
           onRequestClose={this.onCodeDialogClose}>
-          <CodeViewComponent value={geoJSON} onCopy={this.onCopy}/>
+          <CodeViewComponent value={geoJSON} onCopy={this.onCopy} isNotificationVisible={isNotificationVisible}/>
         </Dialog>
       </div>
     )

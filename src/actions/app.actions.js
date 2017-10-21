@@ -1,85 +1,93 @@
-/* eslint-disable no-undef */
-
-import { parseGeoJSON, requestGeocodingForQuery } from '../utils';
 import constants from './constants';
 
-export function setQuery(query) {
+function changeQuery(payload) {
   return {
-    type: constants.SET_QUERY,
-    payload: query
+    type: constants.CHANGE_QUERY,
+    payload
   }
 }
 
-export function geocodeQuery(query) {
-  return (dispatch) => {
-    dispatch(setQuery(query));
-    requestGeocodingForQuery(query)
-      .then((result) => dispatch(geocodeQuerySuccess(result)))
-      .catch((error) => dispatch(geocodeQueryError(error)));
-  }
-}
-
-export function geocodeQuerySuccess(result) {
+function geocodeQuerySuccess(payload) {
   return {
     type: constants.GEOCODE_QUERY_SUCCESS,
-    payload: result
+    payload
   }
 }
 
-export function geocodeQueryError(error) {
+function geocodeQueryError(payload) {
   return {
     type: constants.GEOCODE_QUERY_ERROR,
-    payload: error
+    payload
   }
 }
 
-export function setCenter(center) {
+function setCenter(payload) {
   return {
     type: constants.SET_CENTER,
-    payload: center
+    payload
   }
 }
 
-export function setRadius(radius) {
+function setRadius(payload) {
   return {
     type: constants.SET_RADIUS,
-    payload: radius
+    payload
   }
 }
 
-export function exportGeoJSON(center, radius) {
-  return (dispatch) => {
-    parseGeoJSON(center, radius)
-      .then(result => dispatch({
-        type: constants.EXPORT_GEOJSON_SUCCESS,
-        payload: result
-      }));
-    dispatch(setCodeViewDialogOpen(true));
+function exportGeoJSON(payload) {
+  return {
+    type: constants.EXPORT_GEOJSON,
+    payload: {
+      center: payload.center,
+      radius: payload.radius
+    }
   }
 }
 
-export function setCodeViewDialogOpen(isOpen) {
+function exportGeoJSONSuccess(payload) {
+  return {
+    type: constants.EXPORT_GEOJSON_SUCCESS,
+    payload
+  }
+}
+
+function exportGeoJSONError(payload) {
+  return {
+    type: constants.EXPORT_GEOJSON_ERROR,
+    payload
+  }
+}
+
+function setCodeViewDialogOpen(payload) {
   return {
     type: constants.SET_CODE_VIEW_DIALOG_OPEN,
-    payload: isOpen
+    payload
   }
 }
 
-export function setCopied() {
+function showCopiedNotification() {
   return {
-    type: constants.SET_COPIED,
-    payload: true
+    type: constants.SHOW_COPIED_NOTIFICATION
+  }
+}
+
+function hideCopiedNotification() {
+  return {
+    type: constants.HIDE_COPIED_NOTIFICATION
   }
 }
 
 export default {
-  setQuery,
-  geocodeQuery,
+  changeQuery,
   geocodeQuerySuccess,
   geocodeQueryError,
   setCenter,
   setRadius,
   exportGeoJSON,
+  exportGeoJSONSuccess,
+  exportGeoJSONError,
   setCodeViewDialogOpen,
-  setCopied,
+  showCopiedNotification,
+  hideCopiedNotification,
 }

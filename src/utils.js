@@ -1,7 +1,9 @@
 /* eslint-disable no-undef */
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
 
 export const requestGeocodingForQuery = (query) => {
-  return new Promise((resolve, reject) => {
+  return Observable.fromPromise(new Promise((resolve, reject) => {
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({
       'address': query
@@ -12,11 +14,11 @@ export const requestGeocodingForQuery = (query) => {
         reject(`Geocode was not successful for the following reason: ${status}`);
       }
     });
-  });
+  }));
 }
 
 export const parseGeoJSON = (center, radius, numSides = 25) => {
-  return new Promise((resolve, reject) => {
+  return Observable.fromPromise(new Promise((resolve, reject) => {
     const centerLatLng = new google.maps.LatLng(center.lat, center.lng);
     const points = [];
     const step = 360 / numSides;
@@ -41,5 +43,5 @@ export const parseGeoJSON = (center, radius, numSides = 25) => {
     };
 
     resolve(JSON.stringify(result, null, 2));
-  });
+  }));
 }
