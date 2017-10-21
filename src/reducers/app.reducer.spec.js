@@ -9,7 +9,7 @@ it('should set query', () => {
     query: 'Berlin, Germany'
   };
   expect(
-    reducer(initialState, actions.setQuery('Berlin, Germany'))
+    reducer(initialState, actions.changeQuery('Berlin, Germany'))
   ).toEqual(stateAfter);
 });
 

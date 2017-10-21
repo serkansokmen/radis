@@ -30,7 +30,7 @@ describe('async actions', () => {
     // Initialize mockstore with empty state
     const store = mockStore(initialState);
 
-    return store.dispatch(appActions.geocodeQuery(testQuery)).then(() => {
+    return store.dispatch(appActions.changeQuery(testQuery)).then(() => {
       // return of async actions
       expect(store.getActions()).toEqual(expectedActions);
     });
